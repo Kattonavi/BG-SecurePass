@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Genera contraseñas seguras y robustas al instante. Nuestro generador usa cifrado avanzado para mayor seguridad. Sin registros ni almacenamiento de datos." />
+  <meta name="keywords" content="generador de contraseñas, contraseñas seguras, seguridad online, cifrado, gestor de contraseñas, crear contraseña fuerte, generador de claves" />
+  <meta name="author" content="Kattonavi" />
+  <title>Generador de Contraseñas Seguras y Robusta | BG SecurePass</title>
+  <link rel="canonical" href="https://tudominio.com/generador-contrasenas" />
+</head>
+<style>
+      :root {
+      --bg-color: #1e1e2f;
+      --card-color: #2b2b3c;
+      --text-color: #e0e0f0;
+      --accent-color: #6c63ff;
+      --btn-color: #3d3d5c;
+      --success: #38d39f;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .card {
+      background-color: var(--card-color);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      color: var(--accent-color);
+      margin-bottom: 25px;
+    }
+
+    label, input {
+      display: block;
+      margin: 10px auto;
+      text-align: center;
+    }
+
+    input[type="number"], input[type="checkbox"] {
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      width: 100%;
+      max-width: 200px;
+      font-size: 1rem;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+    }
+
+    button {
+      background-color: var(--btn-color);
+      color: var(--text-color);
+      border: none;
+      padding: 12px 22px;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background-color 0.3s, transform 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--accent-color);
+      color: #fff;
+      transform: scale(1.03);
+    }
+
+    #passwordBox {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .password-card {
+      background-color: #1a1a2b;
+      padding: 16px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 0.95rem;
+      color: var(--success);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .password-card span {
+      user-select: text;
+      margin-bottom: 10px;
+    }
+
+    .copy-btn {
+      background-color: var(--accent-color);
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s;
+    }
+
+    .copy-btn.copiado {
+      background-color: var(--success);
+    }
+
+    #copiado {
+      font-size: 0.9rem;
+      color: var(--success);
+      margin-top: 10px;
+      display: none;
+    }
+
+    .info {
+      font-size: 0.8rem;
+      color: #bbb;
+    }
+
+    .descripcion {
+      max-width: 600px;
+      margin: 0 auto 20px;
+      background-color: var(--card-color);
+      padding: 20px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      color: var(--text-color);
+      line-height: 1.5;
+      transition: max-height 0.4s ease, opacity 0.4s ease;
+      overflow: hidden;
+    }
+
+    .toggle-info {
+      margin: 40px auto 20px;
+      max-width: 600px;
+      text-align: center;
+    }
+
+    .toggle-info button::after {
+      content: " ▼";
+      font-size: 0.9rem;
+    }
+
+    .toggle-info button[aria-expanded="true"]::after {
+      content: " ▲";
+    }
+</style>
+<body>
+  <div class="card">
+    <h1>Generador de Contraseñas</h1>
+
+    <label for="length">Longitud de la contraseña:</label>
+    <input type="number" id="length" min="16" max="512" value="90" />
+    <div class="info">Mínimo: 16 | Máximo: 512 caracteres</div>
+
+    <label for="cantidad">Cantidad de contraseñas:</label>
+    <input type="number" id="cantidad" min="1" max="20" value="1" />
+
+    <label><input type="checkbox" id="verOriginal" /> Mostrar contraseña original</label>
+
+    <button onclick="generar()">Generar Contraseñas</button>
+
+    <div id="passwordBox">Presiona el botón para generar tus contraseñas...</div>
+    <div id="copiado">¡Contraseñas copiadas!</div>
+  </div>
+
+  <div class="toggle-info">
+    <button onclick="toggleDescripcion(this)" aria-expanded="false">¿Cómo funciona este generador?</button>
+    <div class="descripcion" id="descripcion" style="max-height: 0; opacity: 0;">
+      <p>Este generador produce contraseñas altamente seguras utilizando mecanismos de cifrado y codificación avanzados. De forma predeterminada, las contraseñas que se muestran son cifradas y codificadas en Base64, por lo que su longitud visual suele ser de aproximadamente 64 caracteres, independientemente de la longitud que selecciones.</p>
+      <p>Si deseas ver la contraseña original que corresponde exactamente a la longitud que elegiste (por ejemplo, 90, 150 o hasta 512 caracteres), activa la casilla <strong>“Mostrar contraseña original”</strong>. Esto te permitirá visualizar y copiar la contraseña tal cual fue generada, con la longitud precisa que seleccionaste.</p>
+      <p>De esta forma puedes decidir si prefieres utilizar contraseñas cifradas (más compactas y seguras para almacenamiento) o contraseñas en texto plano con la longitud personalizada que seleccionaste.</p>
+    </div>
+
+    <button onclick="toggleConsejos(this)" aria-expanded="false">Consejos y seguridad del generador</button>
+    <div class="descripcion" id="consejos" style="max-height: 0; opacity: 0;">
+      <p>Nuestro generador de contraseñas está diseñado para crear claves completamente robustas, combinando letras, números y símbolos aleatorios de forma que cumplan con los más altos estándares de seguridad.</p>
+      <p><strong>No almacenamos ninguna contraseña</strong> generada: todas se crean en el momento, se muestran directamente en tu navegador y desaparecen al cerrar la página o generar nuevas.</p>
+      <p><strong>Recomendaciones:</strong></p>
+      <ul>
+        <li>Utiliza una longitud mínima de <strong>90 caracteres</strong> siempre que sea posible.</li>
+        <li>Activa la opción "Mostrar contraseña original" si deseas una clave más extensa y con mayor entropía.</li>
+        <li>Guarda tus contraseñas en gestores seguros como <strong>KeePass</strong> o similares.</li>
+        <li>Evita reutilizar contraseñas o usar datos personales.</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+        let ultimasClaves = [];
+
+    async function generar() {
+      const longitud = document.getElementById("length").value;
+      const cantidad = document.getElementById("cantidad").value;
+      const mostrarOriginal = document.getElementById("verOriginal").checked;
+
+      const response = await fetch(`/api/generar?length=${longitud}&amount=${cantidad}`);
+
+      if (response.ok) {
+        const data = await response.json();
+        ultimasClaves = mostrarOriginal ? data.map(p => p.original.trim()) : data.map(p => p.encrypted.trim());
+
+        const box = document.getElementById("passwordBox");
+        box.innerHTML = "";
+        ultimasClaves.forEach((clave) => {
+          const div = document.createElement("div");
+          div.className = "password-card";
+
+          const span = document.createElement("span");
+          span.textContent = clave;
+
+          const btn = document.createElement("button");
+          btn.className = "copy-btn";
+          btn.textContent = "Copiar";
+          btn.onclick = () => {
+            navigator.clipboard.writeText(clave);
+            btn.textContent = "Copiado ✓";
+            btn.classList.add("copiado");
+            setTimeout(() => {
+              btn.textContent = "Copiar";
+              btn.classList.remove("copiado");
+            }, 2000);
+          };
+
+          div.appendChild(span);
+          div.appendChild(btn);
+          box.appendChild(div);
+        });
+
+        document.getElementById("copiado").style.display = "none";
+      } else {
+        document.getElementById("passwordBox").textContent = "Error al generar las contraseñas.";
+      }
+    }
+
+    function toggleDescripcion(btn) {
+      const desc = document.getElementById("descripcion");
+      const expanded = btn.getAttribute("aria-expanded") === "true";
+      desc.style.maxHeight = expanded ? "0" : "500px";
+      desc.style.opacity = expanded ? "0" : "1";
+      btn.setAttribute("aria-expanded", String(!expanded));
+    }
+
+    function toggleConsejos(btn) {
+      const consejos = document.getElementById("consejos");
+      const expanded = btn.getAttribute("aria-expanded") === "true";
+      consejos.style.maxHeight = expanded ? "0" : "1000px";
+      consejos.style.opacity = expanded ? "0" : "1";
+      btn.setAttribute("aria-expanded", String(!expanded));
+    }
+  </script>
+
+    <footer style="background-color: #1a1a2b; color: #bbb; padding: 20px 0; text-align: center; font-size: 0.85rem; margin-top: 60px;">
+    <div style="max-width: 600px; margin: auto;">
+      <p>Creado por <strong>kattonavi</strong> – BG SecurePass</p>
+      <p>Este generador de contraseñas fue desarrollado con enfoque en seguridad, privacidad y accesibilidad.</p>
+      <p>
+        <a href="https://www.instagram.com/kattonavl" target="_blank" style="color: #6c63ff; margin: 0 5px; text-decoration: none;">Instagram</a>
+        <a href="https://github.com/Kattonavi" target="_blank" style="color: #6c63ff; margin: 0 5px; text-decoration: none;">GitHub</a>
+      </p>
+      <p>© 2025 BG SecurePass. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+  
+</body>
+</html>
